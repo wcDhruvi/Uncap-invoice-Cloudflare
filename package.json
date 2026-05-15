@@ -1,30 +1,30 @@
 {
-	"name": "uncap-invoice",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"lint": "eslint .",
-		"preview": "npm run build && vite preview",
-		"deploy": "npm run build && wrangler deploy"
-	},
-	"dependencies": {
-		"react": "^19.2.5",
-		"react-dom": "^19.2.5"
-	},
-	"devDependencies": {
-		"@cloudflare/vite-plugin": "^1.36.4",
-		"@eslint/js": "^10.0.1",
-		"@types/react": "^19.2.14",
-		"@types/react-dom": "^19.2.3",
-		"@vitejs/plugin-react": "^6.0.1",
-		"eslint": "^10.2.1",
-		"eslint-plugin-react-hooks": "^7.1.1",
-		"eslint-plugin-react-refresh": "^0.5.2",
-		"globals": "^17.5.0",
-		"vite": "^8.0.10",
-		"wrangler": "^4.90.1"
-	}
+  "name": "uncap-invoice-test",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "npm run build && wrangler deploy",
+    "dev:worker": "wrangler dev",
+    "dev:frontend": "vite",
+    "dev": "concurrently \"npm run dev:worker\" \"npm run dev:frontend\"",
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.12.4",
+    "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
+    "vite": "^8.0.12",
+    "vitest": "~3.2.0",
+    "wrangler": "^4.90.1"
+  },
+  "dependencies": {
+    "@shopify/app-bridge-react": "^4.2.10",
+    "@shopify/polaris": "^13.9.5",
+    "@shopify/shopify-api": "^13.0.0",
+    "hono": "^4.12.18",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.0"
+  }
 }

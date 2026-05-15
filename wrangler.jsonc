@@ -4,19 +4,21 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "uncap-invoice",
-	"main": "worker/index.js",
+	"name": "uncap-invoice-test",
+	"main": "src/index.js",
 	"compatibility_date": "2026-05-14",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
 	"assets": {
-		"not_found_handling": "single-page-application"
+		// The path to the directory containing the compiled frontend files
+		"directory": "./dist"
 	},
 	"observability": {
 		"enabled": true
 	},
 	"upload_source_maps": true,
-	"compatibility_flags": [
-		"nodejs_compat"
-	]
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
@@ -28,6 +30,13 @@
 	 * databases, object storage, AI inference, real-time communication and more.
 	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
 	 */
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "uncap-invoice-db",
+      "database_id": "b7800778-b72c-488a-b608-27f6bc480263"
+    }
+  ]
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

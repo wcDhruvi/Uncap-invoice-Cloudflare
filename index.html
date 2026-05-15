@@ -1,13 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>uncap-invoice</title>
+    <title>Shopify Embedded App</title>
+    
+    <!-- Shopify App Bridge v4 Configuration -->
+    <meta name="shopify-api-key" content="eae7a8874f46c42c9dfb11ccc258871e" />
+    <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+    <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/frontend/index.jsx"></script>
   </body>
 </html>
