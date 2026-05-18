@@ -30,13 +30,27 @@
 	 * databases, object storage, AI inference, real-time communication and more.
 	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
 	 */
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "uncap-invoice-db",
-      "database_id": "b7800778-b72c-488a-b608-27f6bc480263"
-    }
-  ]
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "uncap-invoice-db",
+			"database_id": "b7800778-b72c-488a-b608-27f6bc480263"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSIONS",
+			"id": "835983d8da7b495bbc62a3c71a1b7247",
+			"preview_id": "bcb5618817a4479f8273d13373ad4304"
+
+		}
+	],
+	// ── Environment Variables (non-secret) ───────────────
+	"vars": {
+		"APP_URL": "https://uncap-invoice-test.wc-dhruvi.workers.dev",
+		"SHOPIFY_SCOPES": "read_all_orders,read_customers,write_customers,read_files,write_files,read_fulfillments,write_inventory,read_inventory,read_locations,read_online_store_navigation,read_orders,read_products,read_content,write_content,unauthenticated_read_customers"
+	},
+	
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

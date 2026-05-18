@@ -14,6 +14,7 @@
     "@cloudflare/vitest-pool-workers": "^0.12.4",
     "@vitejs/plugin-react": "^6.0.1",
     "concurrently": "^9.2.1",
+    "drizzle-kit": "^0.31.10",
     "vite": "^8.0.12",
     "vitest": "~3.2.0",
     "wrangler": "^4.90.1"
@@ -22,7 +23,10 @@
     "@shopify/app-bridge-react": "^4.2.10",
     "@shopify/polaris": "^13.9.5",
     "@shopify/shopify-api": "^13.0.0",
+    "axios": "^1.16.1",
+    "drizzle-orm": "^0.45.2",
     "hono": "^4.12.18",
+    "qs": "^6.15.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.0"

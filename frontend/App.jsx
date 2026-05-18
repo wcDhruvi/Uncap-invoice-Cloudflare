@@ -1,12 +1,12 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { AppProvider as PolarisProvider, Page, Layout, Card, Text, DataTable, Spinner } from '@shopify/polaris';
+import React, { useMemo } from 'react';
+import { AppProvider as PolarisProvider, Page, Layout, Card, Text } from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
+import { Link as RouterLink } from 'react-router-dom';
+import { NavMenu } from '@shopify/app-bridge-react';
+import AppRoutes from './routes';
+import { appRoutes } from './routes/AppRoutes';
 
 export default function App() {
-  const [invoices, setInvoices] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const config = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const host = urlParams.get('host') || '';
@@ -20,29 +20,24 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    // Fetch data from our Cloudflare Worker API Endpoint
-    const fetchInvoices = async () => {
-      try {
-        const response = await fetch('/api/invoices');
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        setInvoices(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  React.useEffect(() => {
+    if (!config.shop) return;
 
-    // Only fetch if we are actually rendering the main view
-    // (If config.host is missing, we render an error card instead)
-    if (config.host || process.env.NODE_ENV === 'development') {
-      fetchInvoices();
-    }
-  }, [config.host]);
+    // Check if the shop is registered in the local database
+    fetch(`/api/shop?shop=${config.shop}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Shop data:", data);
+        if (!data?.id) {
+          console.log("Shop not registered locally, initiating OAuth flow...");
+          window.location.href = `/auth?shop=${config.shop}`;
+          const response = await fetch(`/api/invoices?shop=${shop}`);
+        }
+      })
+      .catch((err) => {
+        console.error("Error checking shop registration:", err);
+      });
+  }, [config.shop]);
 
   if (!config.host && process.env.NODE_ENV !== 'development') {
     return (
@@ -63,54 +58,23 @@ export default function App() {
     );
   }
 
-  // Format data for Polaris DataTable
-  const rows = invoices.map((inv) => [
-    inv.id.toString(),
-    inv.customer_name,
-    `$${inv.amount.toFixed(2)}`,
-    inv.status,
-    new Date(inv.created_at).toLocaleDateString()
-  ]);
+  const navigationLinks = [
+    { label: 'Invoice Dashboard', destination: appRoutes?.dashboard || '/admin/', position: 1 },
+    { label: 'Add Product', destination: '/admin/product/new', position: 2 }
+  ];
 
   return (
     <PolarisProvider i18n={enTranslations}>
-      <Page title="Invoice Dashboard">
-        <Layout>
-          <Layout.Section>
-            <Card>
-              <div style={{ padding: '20px' }}>
-                <Text as="h2" variant="headingMd" style={{ marginBottom: '15px' }}>
-                  Cloudflare D1 Database Integration
-                </Text>
-
-                {isLoading ? (
-                  <Spinner accessibilityLabel="Loading invoices" size="large" />
-                ) : error ? (
-                  <Text color="critical">Failed to load invoices: {error}</Text>
-                ) : (
-                  <DataTable
-                    columnContentTypes={[
-                      'text',
-                      'text',
-                      'numeric',
-                      'text',
-                      'text',
-                    ]}
-                    headings={[
-                      'ID',
-                      'Customer Name',
-                      'Amount',
-                      'Status',
-                      'Created At',
-                    ]}
-                    rows={rows}
-                  />
-                )}
-              </div>
-            </Card>
-          </Layout.Section>
-        </Layout>
-      </Page>
+      <NavMenu>
+        {navigationLinks.sort((a, b) => a.position - b.position).map((x) => (
+          <RouterLink to={x.destination} key={x.position}>
+            {x.label}
+          </RouterLink>
+        ))}
+      </NavMenu>
+      <div style={{ minHeight: "calc(100vh - 57px)" }}>
+        <AppRoutes />
+      </div>
     </PolarisProvider>
   );
 }
