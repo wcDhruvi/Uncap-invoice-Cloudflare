@@ -8,11 +8,15 @@
     "dev:frontend": "vite",
     "dev": "concurrently \"npm run dev:worker\" \"npm run dev:frontend\"",
     "build": "vite build",
-    "test": "vitest"
+    "test": "vitest",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "db:wipe": "wrangler d1 execute uncap-invoice-db --local --command \"PRAGMA foreign_keys = OFF; DELETE FROM shopify_invoices; DELETE FROM shopify_order_line_items; DELETE FROM shopify_fulfillments; DELETE FROM shopify_orders; DELETE FROM shopify_customers; DELETE FROM shopify_product_variants; DELETE FROM shopify_products; DELETE FROM shopify_syncs; DELETE FROM shopify_shops; PRAGMA foreign_keys = ON;\""
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.4",
     "@vitejs/plugin-react": "^6.0.1",
+    "better-sqlite3": "^12.10.0",
     "concurrently": "^9.2.1",
     "drizzle-kit": "^0.31.10",
     "vite": "^8.0.12",
@@ -20,15 +24,19 @@
     "wrangler": "^4.90.1"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.8.0",
     "@shopify/app-bridge-react": "^4.2.10",
     "@shopify/polaris": "^13.9.5",
     "@shopify/shopify-api": "^13.0.0",
     "axios": "^1.16.1",
     "drizzle-orm": "^0.45.2",
+    "graphql": "^16.14.0",
+    "graphql-request": "^7.4.0",
     "hono": "^4.12.18",
     "qs": "^6.15.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^7.15.0"
+    "react-router-dom": "^7.15.0",
+    "zod": "^4.4.3"
   }
 }

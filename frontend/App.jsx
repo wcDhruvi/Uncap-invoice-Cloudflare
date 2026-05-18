@@ -5,8 +5,12 @@ import { Link as RouterLink } from 'react-router-dom';
 import { NavMenu } from '@shopify/app-bridge-react';
 import AppRoutes from './routes';
 import { appRoutes } from './routes/AppRoutes';
+import { useAppBridge } from "@shopify/app-bridge-react";
+
 
 export default function App() {
+  const shopify = useAppBridge();
+
   const config = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const host = urlParams.get('host') || '';
@@ -22,22 +26,41 @@ export default function App() {
 
   React.useEffect(() => {
     if (!config.shop) return;
-
-    // Check if the shop is registered in the local database
-    fetch(`/api/shop?shop=${config.shop}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Shop data:", data);
-        if (!data?.id) {
-          console.log("Shop not registered locally, initiating OAuth flow...");
-          window.location.href = `/auth?shop=${config.shop}`;
-          const response = await fetch(`/api/invoices?shop=${shop}`);
+    
+    const checkInstallation = async () => {
+      try {
+        let authHeaderValue = '';
+        if (shopify.environment?.mobile || shopify.environment?.embedded) {
+          const token = await shopify.idToken();
+          authHeaderValue = `Bearer ${token}`;
+        } else {
+          const localData = window.location.search;
+          const urlParams = new URLSearchParams(localData);
+          const params = Object.fromEntries(urlParams);
+          authHeaderValue = JSON.stringify(params);
         }
-      })
-      .catch((err) => {
+        
+        console.log("Checking local shop registration with Authorization token...");
+        const res = await fetch(`/api/shop?shop=${config.shop}`, {
+          headers: {
+            'Authorization': authHeaderValue
+          }
+        });
+        const data = await res.json();
+        console.log("Shop registration data:", data, data.shop);
+        
+
+        if (!data?.shop?.id) {
+          console.log("Shop not registered locally, initiating fallback OAuth flow...");
+          window.location.href = `/auth?shop=${config.shop}`;
+        }
+      } catch (err) {
         console.error("Error checking shop registration:", err);
-      });
-  }, [config.shop]);
+      }
+    };
+
+    checkInstallation();
+  }, [config.shop, shopify]);
 
   if (!config.host && process.env.NODE_ENV !== 'development') {
     return (

@@ -126,6 +126,7 @@ CREATE TABLE shopify_orders (
   shop_id BIGINT REFERENCES shopify_shops(id),
   customer_id BIGINT,
   email TEXT,
+  tags TEXT,
   number INTEGER,
   order_number INTEGER,
   note TEXT,
@@ -142,7 +143,6 @@ CREATE TABLE shopify_orders (
   confirmed BOOLEAN,
   total_discounts REAL,
   total_line_items_price REAL,
-  cart_token TEXT,
   name TEXT,
   cancelled_at DATETIME,
   cancel_reason TEXT,
@@ -420,3 +420,5 @@ CREATE TABLE shopify_syncs (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+PRAGMA foreign_keys = ON;

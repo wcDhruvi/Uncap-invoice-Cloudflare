@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Page, Layout, Card, Text, DataTable, Spinner } from '@shopify/polaris';
+import { useAppBridge } from '@shopify/app-bridge-react';
 
 export default function Dashboard() {
+  const shopify = useAppBridge();
   const [invoices, setInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,7 +18,22 @@ export default function Dashboard() {
           throw new Error('Missing shop parameter in URL');
         }
 
-        const response = await fetch(`/api/invoices?shop=${shop}`);
+        let authHeaderValue = '';
+        if (shopify.environment?.mobile || shopify.environment?.embedded) {
+          const token = await shopify.idToken();
+          authHeaderValue = `Bearer ${token}`;
+        } else {
+          const localData = window.location.search;
+          const urlParams = new URLSearchParams(localData);
+          const params = Object.fromEntries(urlParams);
+          authHeaderValue = JSON.stringify(params);
+        }
+
+        const response = await fetch(`/api/invoices?shop=${shop}`, {
+          headers: {
+            'Authorization': authHeaderValue
+          }
+        });
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
         }

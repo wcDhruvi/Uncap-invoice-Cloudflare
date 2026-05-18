@@ -45,10 +45,27 @@
 
 		}
 	],
+	"queues": {
+		"producers": [
+			{
+				"binding": "SYNC_QUEUE",
+				"queue": "uncap-invoice-sync"
+			}
+		],
+		"consumers": [
+			{
+				"queue": "uncap-invoice-sync",
+				"max_batch_size": 10,
+				"max_batch_timeout": 5
+			}
+		]
+	},
 	// ── Environment Variables (non-secret) ───────────────
 	"vars": {
-		"APP_URL": "https://uncap-invoice-test.wc-dhruvi.workers.dev",
-		"SHOPIFY_SCOPES": "read_all_orders,read_customers,write_customers,read_files,write_files,read_fulfillments,write_inventory,read_inventory,read_locations,read_online_store_navigation,read_orders,read_products,read_content,write_content,unauthenticated_read_customers"
+		"APP_URL": "https://mnfflqzh-5173.inc1.devtunnels.ms",
+		"SHOPIFY_SCOPES": "read_all_orders,read_customers,write_customers,read_files,write_files,read_fulfillments,write_inventory,read_inventory,read_locations,read_online_store_navigation,read_orders,read_products,read_content,write_content,unauthenticated_read_customers",
+		"SHOPIFY_API_KEY": "eae7a8874f46c42c9dfb11ccc258871e",
+		"SHOPIFY_API_SECRET": "9c565350d5902018cb14362d921f15e5"
 	},
 	
 	/**
