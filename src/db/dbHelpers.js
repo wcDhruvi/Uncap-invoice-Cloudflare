@@ -1,5 +1,5 @@
 import { eq, and } from 'drizzle-orm';
-import { shops, orders, customers, syncs, invoices, products, productVariants, orderLineItems, fulfillments } from './schema';
+import { shops, orders, customers, syncs, invoices, products, productVariants, orderLineItems, fulfillments, invoiceSettings, invoiceLanguages } from './schema';
 
 /**
  * Retrieves a shop record by its Shopify domain.
@@ -179,10 +179,11 @@ export async function createInvoice(db, invoiceData) {
       shop_id: invoiceData.shop_id,
       order_id: invoiceData.order_id,
       invoice_number: invoiceData.invoice_number,
-      amount: invoiceData.amount,
       status: invoiceData.status || 'draft',
-      due_date: invoiceData.due_date,
-      notes: invoiceData.notes,
+      pdf_url: invoiceData.pdf_url,
+      pdf_url_id: invoiceData.pdf_url_id,
+      sent_at: invoiceData.sent_at,
+      paid_at: invoiceData.paid_at,
     })
     .returning();
 }
@@ -318,4 +319,72 @@ export async function upsertFulfillment(db, fulfillmentData) {
         updated_at: new Date().toISOString(),
       },
     });
+}
+
+/**
+ * Gets invoice settings for a shop
+ */
+export async function getInvoiceSettingsByShop(db, shopId) {
+  const result = await db
+    .select()
+    .from(invoiceSettings)
+    .where(eq(invoiceSettings.shop_id, shopId))
+    .limit(1);
+  return result[0] || null;
+}
+
+/**
+ * Gets invoice language for a shop
+ */
+export async function getInvoiceLanguageByShop(db, shopId) {
+  const result = await db
+    .select()
+    .from(invoiceLanguages)
+    .where(eq(invoiceLanguages.shop_id, shopId))
+    .limit(1);
+  return result[0] || null;
+}
+
+/**
+ * Upserts default invoice settings for a shop
+ */
+export async function upsertInvoiceSettings(db, shopId, data) {
+  const existing = await db
+    .select()
+    .from(invoiceSettings)
+    .where(eq(invoiceSettings.shop_id, shopId))
+    .limit(1);
+
+  if (existing.length > 0) {
+    return await db
+      .update(invoiceSettings)
+      .set({ ...data, updated_at: new Date().toISOString() })
+      .where(eq(invoiceSettings.shop_id, shopId));
+  } else {
+    return await db
+      .insert(invoiceSettings)
+      .values({ shop_id: shopId, ...data });
+  }
+}
+
+/**
+ * Upserts default invoice language for a shop
+ */
+export async function upsertInvoiceLanguage(db, shopId, data) {
+  const existing = await db
+    .select()
+    .from(invoiceLanguages)
+    .where(eq(invoiceLanguages.shop_id, shopId))
+    .limit(1);
+
+  if (existing.length > 0) {
+    return await db
+      .update(invoiceLanguages)
+      .set({ ...data, updated_at: new Date().toISOString() })
+      .where(eq(invoiceLanguages.shop_id, shopId));
+  } else {
+    return await db
+      .insert(invoiceLanguages)
+      .values({ shop_id: shopId, ...data });
+  }
 }

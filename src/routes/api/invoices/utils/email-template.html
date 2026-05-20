@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Email</title>
+    <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+        
+        /* Base styles */
+        body {
+            font-family: 'Proxima Nova Condensed', 'Arial Narrow', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+        
+        /* Header styles */
+        .header {
+            background-color: #8257d0;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .company-address {
+            text-align: right;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Info section styles */
+        .info-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .supplier, .client {
+            width: 45%;
+        }
+        
+        .info-heading {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        /* Invoice meta styles */
+        .invoice-meta {
+            display: flex;
+            margin: 10px 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .invoice-meta-item {
+            flex: 1;
+            padding: 15px 10px;
+            background-color: #f0ecf9;
+            text-align: center;
+            border-right: 1px solid #e6e6e6;
+        }
+        
+        .invoice-meta-item:last-child {
+            border-right: none;
+        }
+        
+        .meta-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        /* Table styles */
+        .invoice-table {
+            width: calc(100% - 40px);
+            margin: 20px;
+            border-collapse: collapse;
+        }
+        
+        .invoice-table th {
+            background-color: #f0ecf9;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .invoice-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Totals section */
+        .totals {
+            margin: 0 20px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 5px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        
+        /* Payment info */
+        .payment-info {
+            text-align: center;
+            margin: 30px 0 0px;
+            font-size: 18px;
+            line-height: 25px;
+            letter-spacing: 0.4px;
+        }
+        
+        .thank-you {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0 30px;
+            letter-spacing: 0.4px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <img src="/api/placeholder/80/80" alt="Zylker Logo" class="logo">
+            <div class="company-address">
+                Zylker Thread & Weave<br>
+                14A, Northern Street<br>
+                Greater South Avenue<br>
+                New Yourl 25662<br>
+                U.S.A
+            </div>
+        </div>
+        
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="supplier">
+                <h2 class="info-heading">SUPPLIER</h2>
+                <p>
+                    Vintage Fashion Store<br>
+                    185 Rideau St<br>
+                    Ottawa On K1N 5X8<br>
+                    GST/HST Number: 2655964756
+                </p>
+            </div>
+            
+            <div class="client">
+                <h2 class="info-heading">CLIENT</h2>
+                <p>
+                    Acme LTD,42 Lombard St<br>
+                    Toronto ON M5C 2T9<br>
+                    GST/HST Number: 2655964756<br>
+                    willie.jennings@example.com
+                </p>
+            </div>
+        </div>
+        
+        <!-- Invoice Meta -->
+        <div class="invoice-meta">
+            <div class="invoice-meta-item">
+                <div class="meta-title">INVOICE DATE</div>
+                <div>05 May 2025</div>
+            </div>
+            <div class="invoice-meta-item">
+                <div class="meta-title">TERMS</div>
+                <div>Due on Receipt</div>
+            </div>
+            <div class="invoice-meta-item">
+                <div class="meta-title">DUE DATE</div>
+                <div>05 May 2025</div>
+            </div>
+        </div>
+        
+        <!-- Invoice Table -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ITEM</th>
+                    <th>DESCRIPTION</th>
+                    <th>UNIT PRICE</th>
+                    <th>TAX</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Converse All Star</td>
+                    <td>Size 9</td>
+                    <td>54.44</td>
+                    <td>5%</td>
+                    <td>$49.00</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Converse All Star</td>
+                    <td>White</td>
+                    <td>159.00</td>
+                    <td>5%</td>
+                    <td>$149.00</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Totals Section -->
+        <div class="totals">
+            <div class="total-row">
+                <div>TOTAL EXCL TAX :</div>
+                <div>$198.00</div>
+            </div>
+            <div class="total-row">
+                <div>TAX (GST) 5%</div>
+                <div>$9.90</div>
+            </div>
+            <div class="total-row">
+                <div><strong>TOTAL INCL. TAX :</strong></div>
+                <div><strong>$207.90</strong></div>
+            </div>
+        </div>
+        
+        <!-- Payment Info -->
+        <div class="payment-info">
+            Make all Checks payable to Create & Co.
+        </div>
+        
+        <!-- Thank You Message -->
+        <div class="thank-you">
+            THANK YOU FOR YOUR BUSINESS!
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            Create & Co. 123 Main it. | Seattle, Wa 78652 | Phone : 698-542-6856 | fax : 368-476-9254
+        </div>
+    </div>
+</body>
+</html>

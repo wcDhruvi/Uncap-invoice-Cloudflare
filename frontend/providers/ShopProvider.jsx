@@ -1,19 +1,20 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import { Banner, Page, Text } from "@shopify/polaris";
+import { Banner, Page, Text ,FooterHelp} from "@shopify/polaris";
 import StyledSpinner from "../components/ui/StyledSpinner";
-import BillingPage from "../pages/billing";
+import BillingPage from "../pages/BillingPage";
 import { apiService } from "../utils/Constent";
+import { Link } from "react-router-dom";
 
 export const ShopContext = createContext({});
 
 export default ({ children }) => {
 
 
-  const [show, setShow]                         = useState(false);
-  const [bannerContext, setBannerContext]         = useState("");
+  const [show, setShow] = useState(false);
+  const [bannerContext, setBannerContext] = useState("");
   const [availableTrialDays, setAvailableTrialDays] = useState(0);
-  const [loading, setLoading]                   = useState(true);
-  const [shop, setShop]                         = useState({});
+  const [loading, setLoading] = useState(true);
+  const [shop, setShop] = useState({});
 
   const handleDismiss = useCallback(() => setShow(false), []);
 
@@ -29,7 +30,7 @@ export default ({ children }) => {
         } else {
           console.log("shop res : ", res);
           setShop({ ...res?.shop, currency: res.currency || res.currencyBackup });
-          
+
         }
       } catch (error) {
         console.error("Error loading shop data:", error);
@@ -90,6 +91,17 @@ export default ({ children }) => {
         </Page>
       )}
       {children}
+      {/* {
+        location.pathname === "/settings/support" ? "" :
+          <FooterHelp>
+            <Text>
+              if you need any help, please{' '}
+              <Link to="/settings/support">
+                Contact us
+              </Link>
+            </Text>
+          </FooterHelp>
+      } */}
     </ShopContext.Provider>
   );
 };

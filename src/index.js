@@ -3,10 +3,12 @@ import { Hono } from 'hono';
 import apiRoutes from './routes/api';
 import { handleWebhook } from './webhooks/shopify';
 import { getDrizzle } from './db/drizzle';
-import { getShopByDomain, upsertShop } from './db/dbHelpers';
+import { getShopByDomain, upsertShop, upsertInvoiceSettings, upsertInvoiceLanguage } from './db/dbHelpers';
 import { getShopifyClient } from './utils/shopifyClient';
 import { processSyncMessage } from './utils/queueConsumer';
 import { exchangeToken, shopifyAPI, registerAllWebhooks } from './utils/shopHelpers';
+import { shops } from './db/schema';
+import { eq } from 'drizzle-orm';
 
 const app = new Hono();
 
@@ -156,6 +158,60 @@ app.get('/auth/callback', async (c) => {
       is_active: true
     });
 
+    try {
+      // 1. Create or update default invoice language
+      console.log(`Setting default invoice language for shop ${id}`);
+      await upsertInvoiceLanguage(db, id, {});
+
+      // 2. Create or update default invoice settings
+      console.log(`Setting default invoice settings for shop ${id}`);
+      const templateSettings = {
+        taxes: {
+          taxNumber: "VAT: 98787845",
+          taxHideZero: false,
+          taxIndividual: true,
+          taxEachProduct: true
+        },
+        discount: {
+          hideDiscountZero: false,
+          showDiscountAfterSubtotal: true,
+          hideDiscountTotalPriceZero: false,
+          showDiscountAppliedOriginalPrice: true
+        },
+        shipping: {
+          showShippingMethod: true,
+          hideShippingFreeDelivery: false
+        }
+      };
+
+      await upsertInvoiceSettings(db, id, {
+        business_name: name,
+        brand_name: name,
+        sender_address: shopData.shop.customer_email || email,
+        support_email: shopData.shop.customer_email || email,
+        business_address: shopData.shop.address1,
+        city: shopData.shop.city,
+        country: shopData.shop.country_name,
+        phone: shopData.shop.phone,
+        zip_code: shopData.shop.zip,
+        template_settings: JSON.stringify(templateSettings)
+      });
+
+      // 3. Trigger full Shopify data sync
+      if (c.env.SYNC_QUEUE) {
+        console.log(`Triggering Shopify sync for shop ${shop}`);
+        await c.env.SYNC_QUEUE.send({
+          shop_id: id,
+          domain: shop,
+          models: ['products', 'orders', 'customers', 'fulfillments']
+        });
+      } else {
+        console.warn('SYNC_QUEUE is not bound, skipping full sync.');
+      }
+    } catch (err) {
+      console.error('Error during post-install setup:', err);
+    }
+
     // Register all real-time webhooks in the background
     c.executionCtx.waitUntil(registerAllWebhooks(shop, access_token, c.env));
 
@@ -195,6 +251,28 @@ export default {
     for (const message of batch.messages) {
       const syncMessage = message.body;
       await processSyncMessage(db, syncMessage);
+    }
+  },
+  async scheduled(event, env, ctx) {
+    console.log(`⏰ [Cron Worker] Triggered scheduled Shopify sync at ${event.cron}`);
+    const db = getDrizzle(env);
+    
+    try {
+      // Fetch all active shops
+      const activeShops = await db.select().from(shops).where(eq(shops.is_active, true));
+      
+      for (const shop of activeShops) {
+        if (env.SYNC_QUEUE) {
+          console.log(`✉️ Queuing daily sync for shop ${shop.myshopify_domain}`);
+          await env.SYNC_QUEUE.send({
+            shopId: shop.id,
+            shopDomain: shop.myshopify_domain,
+            accessToken: shop.access_token,
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error during scheduled sync:', err);
     }
   }
 };

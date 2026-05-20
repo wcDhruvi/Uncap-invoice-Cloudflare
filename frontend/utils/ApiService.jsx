@@ -38,15 +38,22 @@ const ApiService = () => {
         let result = '';
 
         try {
-
-            const res = await instance[method](url, data, config);
+            let res;
+            if (method === 'get') {
+                if (data) {
+                    config.params = data;
+                }
+                res = await instance.get(url, config);
+            } else {
+                res = await instance[method](url, data, config);
+            }
             if (res.status === 200) {
                 result = { ...res.data, apiStatus: res.status };
             } else {
                 result = { ...res.data, apiStatus: res.status };
             }
         } catch (e) {
-            result = { ...e?.response?.data, apiStatus: e.status, message: e.message };
+            result = { ...e?.response?.data, apiStatus: e?.response?.status || 500, message: e.message };
         }
 
         return result;
@@ -55,7 +62,7 @@ const ApiService = () => {
 
     // //----------------------------API-Methods-----------------------------//
 
-    const getData = async (url, header) => await fetchData('get', url, null, false, header);
+    const getData = async (url, params, header) => await fetchData('get', url, params, false, header);
 
     const postData = async (url, data, isFormData, header) => await fetchData('post', url, data, isFormData, header);
 
@@ -70,7 +77,10 @@ const ApiService = () => {
         getInvoices: () => getData(`/api/invoices`),
         getPlans: () => getData(`/api/plans`),
         selectPlan: (payload) => postData(`/api/plans/select-plan`, payload),
-
+        getOrderList: (params) => postData('/api/orders', params),
+        getInvoiceByOrder: (params) => getData('/api/invoices/by-order', params),
+        createInvoice: (data) => postData('/api/invoices', data),
+        sendInvoice: (id, data) => postData(`/api/invoices/${id}/send`, data)
 
     }
 

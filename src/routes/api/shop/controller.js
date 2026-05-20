@@ -1,6 +1,6 @@
 import { getShopifyClient } from '../../../utils/shopifyClient';
 import { getDrizzle } from '../../../db/drizzle';
-import { getShopByDomain, upsertShop } from '../../../db/dbHelpers';
+import { getShopByDomain, upsertShop, upsertInvoiceSettings, upsertInvoiceLanguage } from '../../../db/dbHelpers';
 import { GraphQLClient } from 'graphql-request';
 import { processSyncMessage } from '../../../utils/queueConsumer';
 import { registerAllWebhooks } from '../../../utils/shopHelpers';
@@ -103,6 +103,43 @@ export const getShopDetails = async (c) => {
 
       await upsertShop(db, upsertData);
       console.log(`🔄 Shop ${shopDomain} successfully installed/updated in Drizzle D1`);
+
+      try {
+        console.log(`Setting default invoice language for shop ${id}`);
+        await upsertInvoiceLanguage(db, id, {});
+  
+        console.log(`Setting default invoice settings for shop ${id}`);
+        const templateSettings = {
+          taxes: {
+            taxNumber: "VAT: 98787845",
+            taxHideZero: false,
+            taxIndividual: true,
+            taxEachProduct: true
+          },
+          discount: {
+            hideDiscountZero: false,
+            showDiscountAfterSubtotal: true,
+            hideDiscountTotalPriceZero: false,
+            showDiscountAppliedOriginalPrice: true
+          },
+          shipping: {
+            showShippingMethod: true,
+            hideShippingFreeDelivery: false
+          }
+        };
+  
+        await upsertInvoiceSettings(db, id, {
+          business_name: shopInfo.name,
+          brand_name: shopInfo.name,
+          sender_address: shopInfo.email,
+          support_email: shopInfo.email,
+          city: shopInfo.billingAddress?.city || '',
+          country: shopInfo.billingAddress?.country || '',
+          template_settings: JSON.stringify(templateSettings)
+        });
+      } catch (err) {
+        console.error('Error during post-install settings setup in getShopDetails:', err);
+      }
 
       // Register all real-time webhooks in the background
       c.executionCtx.waitUntil(registerAllWebhooks(shopDomain, token, c.env));
