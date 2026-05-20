@@ -3,12 +3,18 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import '@shopify/polaris/build/esm/styles.css';
+import ShopProvider from './providers/ShopProvider';
+import PolarisProvider from './providers/PolarisProvider';
 
 const root = document.getElementById('root');
 if (root) {
   createRoot(root).render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <PolarisProvider>
+      <BrowserRouter>
+        <ShopProvider>
+          <App />
+        </ShopProvider>
+      </BrowserRouter>
+    </PolarisProvider>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Page, Layout, Card, Text, DataTable, Spinner } from '@shopify/polaris';
 import { useAppBridge } from '@shopify/app-bridge-react';
+import { apiService } from '../utils/Constent'
 
 export default function Dashboard() {
   const shopify = useAppBridge();
@@ -11,6 +12,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
+        // Get shop from URL query string
         const urlParams = new URLSearchParams(window.location.search);
         const shop = urlParams.get('shop');
 
@@ -18,34 +20,21 @@ export default function Dashboard() {
           throw new Error('Missing shop parameter in URL');
         }
 
-        let authHeaderValue = '';
-        if (shopify.environment?.mobile || shopify.environment?.embedded) {
-          const token = await shopify.idToken();
-          authHeaderValue = `Bearer ${token}`;
-        } else {
-          const localData = window.location.search;
-          const urlParams = new URLSearchParams(localData);
-          const params = Object.fromEntries(urlParams);
-          authHeaderValue = JSON.stringify(params);
+        // ApiService interceptor handles Authorization header automatically
+        const data = await apiService.getInvoices({ shop });
+
+        if (data.apiStatus !== 200) {
+          throw new Error(data.message || `Error: ${data.apiStatus}`);
         }
 
-        const response = await fetch(`/api/invoices?shop=${shop}`, {
-          headers: {
-            'Authorization': authHeaderValue
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        setInvoices(data);
+        setInvoices(Array.isArray(data) ? data : data.invoices ?? []);
+
       } catch (err) {
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchInvoices();
   }, []);
 

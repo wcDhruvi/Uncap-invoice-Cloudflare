@@ -218,4 +218,16 @@ export const fulfillments = sqliteTable('shopify_fulfillments', {
   updated_at: text('updated_at').default('CURRENT_TIMESTAMP'),
 });
 
-export const schema = { shops, invoices, orders, products, customers, syncs, productVariants, orderLineItems, fulfillments };
+export const plans = sqliteTable('plans', {
+  id:            integer('id').primaryKey({ autoIncrement: true }).notNull(),
+  name:          text('name').notNull(),
+  description:   text('description'),
+  monthly_price: real('monthly_price').default(0),
+  trial_days:    integer('trial_days').default(0),
+  currency:      text('currency').default('CAD'),
+  features:      text('features'),               // JSON string → parse in route
+  created_at:    text('created_at').default('CURRENT_TIMESTAMP'),
+  updated_at:    text('updated_at').default('CURRENT_TIMESTAMP'),
+});
+
+export const schema = { shops, invoices, orders, products, customers, syncs, productVariants, orderLineItems, fulfillments, plans };

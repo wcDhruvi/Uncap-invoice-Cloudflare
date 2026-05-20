@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { ApiBaseUrl } from './Constent';
 import qs from 'qs';
 
 const instance = axios.create();
 
 const ApiService = () => {
-    const baseUrl = ApiBaseUrl;
 
     const shopify = useAppBridge();
 
@@ -65,19 +63,15 @@ const ApiService = () => {
 
     const deleteData = async (url, header) => await fetchData('delete', url, null, false, header);
 
-    // //---------------------------------------------------------------------//
-
-
-    //--------------------------------API----------------------------------//
+    // ── API methods (memoized so reference is stable across renders) ────────────
     return {
-        getShopDetails: async (payload) => await getData(`${baseUrl}/shop-details?${qs.stringify(payload)}`,),
-        getProductList: async (payload) => await postData(`${baseUrl}/products-list`, payload),
-        getUniqueData: async () => await getData(`${baseUrl}/products-filters`),
-        getSingleProduct: async (id) => await getData(`${baseUrl}/products/${id}`,),
-        storeProduct: async (payload) => await postData(`${baseUrl}/products-save`, payload),
-        deleteProduct: async (payload) => await postData(`${baseUrl}/products/delete`, payload),
-        exportProducts: async () => await getData(`${baseUrl}/export-products`),
-        importProducts: async (payload) => await postData(`${baseUrl}/import-products`, payload, true)
+
+        getShopDetails: () => getData(`/api/shop`),
+        getInvoices: () => getData(`/api/invoices`),
+        getPlans: () => getData(`/api/plans`),
+        selectPlan: (payload) => postData(`/api/plans/select-plan`, payload),
+
+
     }
 
 }

@@ -1,16 +1,14 @@
 import React, { useMemo } from 'react';
-import { AppProvider as PolarisProvider, Page, Layout, Card, Text } from '@shopify/polaris';
-import enTranslations from '@shopify/polaris/locales/en.json';
+import { Page, Layout, Card, Text } from '@shopify/polaris';
+
 import { Link as RouterLink } from 'react-router-dom';
 import { NavMenu } from '@shopify/app-bridge-react';
 import AppRoutes from './routes';
 import { appRoutes } from './routes/AppRoutes';
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { apiService } from './utils/Constent';
 
 
 export default function App() {
-  const shopify = useAppBridge();
-
   const config = useMemo(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const host = urlParams.get('host') || '';
@@ -26,45 +24,30 @@ export default function App() {
 
   React.useEffect(() => {
     if (!config.shop) return;
-    
+
     const checkInstallation = async () => {
       try {
-        let authHeaderValue = '';
-        if (shopify.environment?.mobile || shopify.environment?.embedded) {
-          const token = await shopify.idToken();
-          authHeaderValue = `Bearer ${token}`;
-        } else {
-          const localData = window.location.search;
-          const urlParams = new URLSearchParams(localData);
-          const params = Object.fromEntries(urlParams);
-          authHeaderValue = JSON.stringify(params);
-        }
-        
-        console.log("Checking local shop registration with Authorization token...");
-        const res = await fetch(`/api/shop?shop=${config.shop}`, {
-          headers: {
-            'Authorization': authHeaderValue
-          }
-        });
-        const data = await res.json();
+        console.log("Checking local shop registration...");
+
+        const data = await apiService.getShopDetails({ shop: config.shop });
+
         console.log("Shop registration data:", data, data.shop);
-        
 
         if (!data?.shop?.id) {
           console.log("Shop not registered locally, initiating fallback OAuth flow...");
           window.location.href = `/auth?shop=${config.shop}`;
         }
+
       } catch (err) {
         console.error("Error checking shop registration:", err);
       }
     };
 
     checkInstallation();
-  }, [config.shop, shopify]);
+  }, [config.shop]);
 
   if (!config.host && process.env.NODE_ENV !== 'development') {
     return (
-      <PolarisProvider i18n={enTranslations}>
         <Page>
           <Layout>
             <Layout.Section>
@@ -77,7 +60,6 @@ export default function App() {
             </Layout.Section>
           </Layout>
         </Page>
-      </PolarisProvider>
     );
   }
 
@@ -87,7 +69,7 @@ export default function App() {
   ];
 
   return (
-    <PolarisProvider i18n={enTranslations}>
+    <>
       <NavMenu>
         {navigationLinks.sort((a, b) => a.position - b.position).map((x) => (
           <RouterLink to={x.destination} key={x.position}>
@@ -98,6 +80,6 @@ export default function App() {
       <div style={{ minHeight: "calc(100vh - 57px)" }}>
         <AppRoutes />
       </div>
-    </PolarisProvider>
+    </>
   );
 }
