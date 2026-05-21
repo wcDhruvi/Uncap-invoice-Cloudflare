@@ -10,11 +10,12 @@ import {
 import PlanCard from "../components/ui/PlanCard";
 import StyledSpinner from "../components/ui/StyledSpinner";
 import { useCallback, useEffect, useState } from "react";
-import { apiService } from "../utils/Constent";
-import { useNavigate } from "react-router-dom";
+import { apiService, baseUrl } from "../utils/Constent";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [plans, setPlans]               = useState([]);
   const [fetchingPlans, setFetchingPlans] = useState(true);
@@ -55,7 +56,7 @@ export default () => {
       title="Select a plan"
       backAction={{
         content: "Back to Settings",
-        onAction: () => navigate("/settings"),
+        onAction: () => navigate(`${baseUrl}settings${location.search}`),
       }}
     >
       <BlockStack gap="500">

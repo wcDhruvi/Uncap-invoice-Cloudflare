@@ -6,6 +6,7 @@ import { NavMenu } from '@shopify/app-bridge-react';
 import AppRoutes from './routes';
 import { appRoutes } from './routes/AppRoutes';
 import { apiService, baseUrl } from './utils/Constent';
+import "./app.css";
 
 
 export default function App() {
@@ -22,24 +23,25 @@ export default function App() {
     };
   }, []);
 
-  React.useEffect(() => {
-    if (!config.shop) return;
+  // React.useEffect(() => {
+  //   if (!config.shop) return;
 
-    const checkInstallation = async () => {
-      try {
+  //   const checkInstallation = async () => {
+  //     try {
 
-        const data = await apiService.getShopDetails({ shop: config.shop });
-        if (!data?.shop?.id) {
-          window.location.href = `/auth?shop=${config.shop}`;
-        }
+  //       const data = await apiService.getShopDetails({ shop: config.shop });
+  //       if (!data?.shop?.id) {
+  //         const apiBase = import.meta.env.VITE_API_URL || "";
+  //         window.location.href = `${apiBase}/auth?shop=${config.shop}`;
+  //       }
 
-      } catch (err) {
-        console.error("Error checking shop registration:", err);
-      }
-    };
+  //     } catch (err) {
+  //       console.error("Error checking shop registration:", err);
+  //     }
+  //   };
 
-    checkInstallation();
-  }, [config.shop]);
+  //   checkInstallation();
+  // }, [config.shop]);
 
   if (!config.host && process.env.NODE_ENV !== 'development') {
     return (
@@ -67,7 +69,7 @@ export default function App() {
     <>
       <NavMenu>
         {navigationLinks.sort((a, b) => a.position - b.position).map((x) => (
-          <RouterLink to={x.destination} key={x.position}>
+          <RouterLink to={`${x.destination}${window.location.search}`} key={x.position}>
             {x.label}
           </RouterLink>
         ))}

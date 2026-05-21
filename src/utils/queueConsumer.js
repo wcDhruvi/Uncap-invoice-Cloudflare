@@ -337,7 +337,6 @@ export async function syncOrdersGraphQL(db, shopDomain, token, shopId) {
         confirmed: !!node.confirmed,
         total_discounts: parseFloat(node.totalDiscountsSet?.shopMoney?.amount || '0'),
         total_line_items_price: parseFloat(node.subtotalPriceSet?.shopMoney?.amount || '0'),
-        cart_token: null,
         name: node.name || '',
         cancelled_at: node.cancelledAt || null,
         cancel_reason: node.cancelReason || '',

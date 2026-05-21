@@ -1,5 +1,25 @@
--- System Tables
+PRAGMA foreign_keys = OFF;
+
+-- Drop all tables in correct reverse-dependency order to avoid Foreign Key constraint errors
+DROP TABLE IF EXISTS shopify_syncs;
+DROP TABLE IF EXISTS shopify_refunds;
+DROP TABLE IF EXISTS shopify_fulfillments;
+DROP TABLE IF EXISTS shopify_inventory_levels;
+DROP TABLE IF EXISTS shopify_inventory_items;
+DROP TABLE IF EXISTS shopify_locations;
+DROP TABLE IF EXISTS invoice_languages;
+DROP TABLE IF EXISTS invoice_settings;
+DROP TABLE IF EXISTS invoices;
+DROP TABLE IF EXISTS shopify_order_line_items;
+DROP TABLE IF EXISTS shopify_orders;
+DROP TABLE IF EXISTS shopify_customers;
+DROP TABLE IF EXISTS shopify_product_variants;
+DROP TABLE IF EXISTS shopify_products;
+DROP TABLE IF EXISTS shopify_shops;
+DROP TABLE IF EXISTS shopify_sessions;
 DROP TABLE IF EXISTS plans;
+
+-- System Tables
 CREATE TABLE plans (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -12,7 +32,6 @@ CREATE TABLE plans (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_sessions;
 CREATE TABLE shopify_sessions (
   id TEXT PRIMARY KEY, -- sessionId from Shopify
   shop TEXT NOT NULL,
@@ -27,7 +46,6 @@ CREATE TABLE shopify_sessions (
 );
 
 -- Shopify Core Tables
-DROP TABLE IF EXISTS shopify_shops;
 CREATE TABLE shopify_shops (
   id BIGINT PRIMARY KEY, -- Shopify ID
   myshopify_domain TEXT UNIQUE NOT NULL,
@@ -74,7 +92,6 @@ CREATE TABLE shopify_shops (
   installed_at     TEXT    DEFAULT (datetime('now'))
 );
 
-DROP TABLE IF EXISTS shopify_products;
 CREATE TABLE shopify_products (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -91,7 +108,6 @@ CREATE TABLE shopify_products (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_product_variants;
 CREATE TABLE shopify_product_variants (
   id BIGINT PRIMARY KEY,
   product_id BIGINT REFERENCES shopify_products(id),
@@ -120,7 +136,6 @@ CREATE TABLE shopify_product_variants (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_orders;
 CREATE TABLE shopify_orders (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -161,7 +176,6 @@ CREATE TABLE shopify_orders (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_order_line_items;
 CREATE TABLE shopify_order_line_items (
   id BIGINT PRIMARY KEY,
   order_id BIGINT REFERENCES shopify_orders(id),
@@ -195,7 +209,6 @@ CREATE TABLE shopify_order_line_items (
 );
 
 -- App Specific Tables
-DROP TABLE IF EXISTS invoices;
 CREATE TABLE invoices (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -204,14 +217,12 @@ CREATE TABLE invoices (
   status TEXT CHECK( status IN ('draft', 'sent', 'paid', 'void') ) DEFAULT 'draft',
   pdf_url TEXT,
   pdf_url_id TEXT,
-  digital_ocean_url TEXT,
   sent_at DATETIME,
   paid_at DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS invoice_settings;
 CREATE TABLE invoice_settings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -221,6 +232,10 @@ CREATE TABLE invoice_settings (
   city TEXT,
   country TEXT,
   zip_code TEXT,
+  street TEXT,
+  apartment TEXT,
+  state TEXT,
+  additional_info TEXT,
   phone TEXT,
   company_website TEXT,
   support_email TEXT,
@@ -268,7 +283,6 @@ CREATE TABLE invoice_settings (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS invoice_languages;
 CREATE TABLE invoice_languages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -277,6 +291,10 @@ CREATE TABLE invoice_languages (
   invoice_date TEXT DEFAULT 'INVOICE DATE',
   bill_to TEXT DEFAULT 'Bill To',
   ship_to TEXT DEFAULT 'Ship To',
+  shipping_address TEXT DEFAULT 'Shipping Address',
+  billing_address TEXT DEFAULT 'Billing Address',
+  phone TEXT DEFAULT 'Phone:',
+  payment_info TEXT DEFAULT 'Make all Checks payable to',
   item TEXT DEFAULT 'ITEM',
   description TEXT DEFAULT 'Description',
   qty TEXT DEFAULT 'QTY',
@@ -305,7 +323,6 @@ CREATE TABLE invoice_languages (
 );
 
 -- Additional Shopify Tables
-DROP TABLE IF EXISTS shopify_customers;
 CREATE TABLE shopify_customers (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -330,7 +347,6 @@ CREATE TABLE shopify_customers (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_locations;
 CREATE TABLE shopify_locations (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -352,7 +368,6 @@ CREATE TABLE shopify_locations (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_inventory_items;
 CREATE TABLE shopify_inventory_items (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -367,7 +382,6 @@ CREATE TABLE shopify_inventory_items (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_inventory_levels;
 CREATE TABLE shopify_inventory_levels (
   id TEXT PRIMARY KEY, -- Composite key id usually
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -377,7 +391,6 @@ CREATE TABLE shopify_inventory_levels (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_fulfillments;
 CREATE TABLE shopify_fulfillments (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -396,7 +409,6 @@ CREATE TABLE shopify_fulfillments (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_refunds;
 CREATE TABLE shopify_refunds (
   id BIGINT PRIMARY KEY,
   shop_id BIGINT REFERENCES shopify_shops(id),
@@ -409,7 +421,6 @@ CREATE TABLE shopify_refunds (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS shopify_syncs;
 CREATE TABLE shopify_syncs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   shop_id BIGINT REFERENCES shopify_shops(id),

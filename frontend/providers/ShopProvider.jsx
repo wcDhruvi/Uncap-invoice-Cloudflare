@@ -1,20 +1,19 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import { Banner, Page, Text ,FooterHelp} from "@shopify/polaris";
+import { Banner, Page, Text, FooterHelp } from "@shopify/polaris";
 import StyledSpinner from "../components/ui/StyledSpinner";
-import BillingPage from "../pages/BillingPage";
 import { apiService } from "../utils/Constent";
-import { Link } from "react-router-dom";
+import { Link, useLocation, Navigate } from "react-router-dom";
+import { appRoutes } from "../routes/AppRoutes";
 
 export const ShopContext = createContext({});
 
 export default ({ children }) => {
-
-
   const [show, setShow] = useState(false);
   const [bannerContext, setBannerContext] = useState("");
   const [availableTrialDays, setAvailableTrialDays] = useState(0);
   const [loading, setLoading] = useState(true);
   const [shop, setShop] = useState({});
+  const location = useLocation();
 
   const handleDismiss = useCallback(() => setShow(false), []);
 
@@ -30,7 +29,6 @@ export default ({ children }) => {
         } else {
           console.log("shop res : ", res);
           setShop({ ...res?.shop, currency: res.currency || res.currencyBackup });
-
         }
       } catch (error) {
         console.error("Error loading shop data:", error);
@@ -54,10 +52,13 @@ export default ({ children }) => {
   }
 
   console.log("shop : ", shop);
-  // ── No plan selected → show billing ──────────────────────────────────────
-  // useNavigate() removed — it requires <Router> context which isn't
-  // guaranteed at provider level. Render BillingPage directly instead.
+  
   if (!shop?.plan_id) {
+    // If not already on the plans page, redirect there
+    if (location.pathname !== appRoutes.plans) {
+      return <Navigate to={`${appRoutes.plans}${location.search}`} replace />;
+    }
+
     return (
       <ShopContext.Provider value={{ shop }}>
         {show && (
@@ -70,7 +71,7 @@ export default ({ children }) => {
             </Text>
           </Banner>
         </Page>
-        <BillingPage />
+        {children}
       </ShopContext.Provider>
     );
   }
@@ -91,17 +92,17 @@ export default ({ children }) => {
         </Page>
       )}
       {children}
-      {/* {
-        location.pathname === "/settings/support" ? "" :
+      {
+        location.pathname === appRoutes.support ? "" :
           <FooterHelp>
             <Text>
               if you need any help, please{' '}
-              <Link to="/settings/support">
+              <Link to={`${appRoutes.support}${location.search || window.location.search}`}>
                 Contact us
               </Link>
             </Text>
           </FooterHelp>
-      } */}
+      }
     </ShopContext.Provider>
   );
 };

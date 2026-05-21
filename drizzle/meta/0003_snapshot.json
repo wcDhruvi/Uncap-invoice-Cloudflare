@@ -649,13 +649,7 @@
           "notNull": false,
           "autoincrement": false
         },
-        "cart_token": {
-          "name": "cart_token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
+      
         "name": {
           "name": "name",
           "type": "text",

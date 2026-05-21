@@ -1,0 +1,212 @@
+/* Start On boarding */
+ul.boringListNav {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #f6f6f7;
+}
+
+ul.boringListNav li {
+    font-size: 16px;
+    padding: 16px;
+    line-height: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px solid #edeeef;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+ul.boringListNav li.is-active-nav {
+    background-color: #fff;
+}
+
+ul.boringListNav li span {
+    width: 18px;
+    height: 18px;
+    background: #5c5f6278;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 0;
+    margin-right: 10px;
+}
+
+ul.boringListNav li.is-active-nav span {
+    background: #303030;
+    color: #FFFFFF
+}
+
+ul.boringListNav li.is-active-nav:before {
+    content: '';
+    width: 3px;
+    height: 100%;
+    display: block;
+    background-color: #303030;
+    position: absolute;
+    left: 0;
+    top: 0
+}
+
+.boringListContain {
+    padding: 20px 30px;
+    border-top: 1px solid #edeeef;
+    min-height: 200px;
+}
+
+.boringListContain .Polaris-Heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 2.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.boringListContain p {
+    font-size: 1em;
+    font-weight: 400;
+}
+
+.boringListContain .Polaris-Button {
+    margin: 0.2rem 0;
+}
+
+.boringListContain .code-setup-btn .Polaris-Button {
+    margin: 0;
+}
+
+/* End On boarding */
+
+/* Start Support box */
+.app_support_box {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    line-height: 0;
+    padding: 12px 0 6px 0;
+}
+
+.app_support_box .asb_icon {
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.app_support_box .asb_icon svg {
+    width: 80px;
+}
+
+.app_support_box .asb_contain {
+    width: 100%;
+    display: inline-block;
+}
+
+.app_support_box .asb_contain h2 {
+    font-size: 24px;
+    line-height: normal;
+    font-weight: 600;
+}
+
+.app_support_box .asb_contain .asb_text {
+    width: 100%;
+    display: inline-block;
+    padding-top: 6px;
+    padding-bottom: 20px;
+}
+
+.app_support_box .asb_contain .asb_text p {
+    line-height: normal;
+    font-size: 16px;
+}
+
+.app_support_box.style2 .asb_icon {
+    margin-bottom: 16px;
+}
+
+.app_support_box.style2 .asb_icon svg {
+    width: 60px;
+}
+
+.app_support_box.style2 .asb_contain h2 {
+    font-size: 18px;
+}
+
+.app_support_box.style2 .asb_contain .asb_text {
+    padding-top: 4px;
+    padding-bottom: 16px;
+}
+
+.app_support_box.style2 .asb_contain .asb_text p {
+    font-size: 14px;
+}
+
+/* End Support box */
+
+.support-page {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    inset: 0px;
+    padding-bottom: calc(var(--pc-frame-global-ribbon-height, 0) + var(--pg-bottom-bar-height, 0));
+    width: 100%;
+}
+
+iframe.clickup-embed {
+    height: 100%;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+}
+
+.text_capitalize {
+    text-transform: capitalize;
+}
+
+.variable_list {
+    padding: 10px;
+}
+
+.variable_list .Polaris-DescriptionList__Term,
+.variable_list .Polaris-DescriptionList__Description {
+    border-top: 0 !important
+}
+
+.round-color-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+/* Webkit browsers (Chrome, Safari) */
+.round-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+}
+
+.round-color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+/* Firefox */
+.round-color-input::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+

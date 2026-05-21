@@ -1,0 +1,43 @@
+{
+    "settings": {
+        "newOrderEmailContent": " <p>Dear {{ client.first_name }},</p><p>Please find the attached invoice for your order {{ number }}.</p><p>Please contact us for further support.</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>{{ account.name }}</p>",
+        "newOrderEmailTitle": "Invoice {{ number }} from {{ account.name }}",
+        "cancelledOrderEmailContent": "<p>Dear {{ client.first_name }},</p><p>Please find the updated invoice for your order {{ number }}.</p><p>Please contact us for further support.122</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>{{ account.name }}</p>",
+        "cancelledOrderEmailTitle": "Updated invoice {{ number }} from {{ account.name }}",
+        "senderAddress": "support@uncap.com",
+        "senderName": "Uncap",
+        "editedOrderEmailContent": "<p>Dear {{ client.first_name }},</p><p>Please find the updated invoice for your order {{ number }}.</p><p>Please contact us for further support.</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>{{ account.name }}</p>",
+        "editedOrderEmailTitle": "Updated invoice {{ number }} from {{ account.name }}"
+    },
+    "language": {
+        "termConditionContent": "<p><strong>Terms:</strong></p><ul><li>This is a computer generated invoice and does not require signature.</li><li>For warranty and returns related information, please contact our customer support.</li></ul>",
+        "thankYouNote": "Thank you for your purchase.",
+        "paymentInfo": "Make all Checks payable to",
+        "invoice": "Invoice",
+        "invoiceNumber": "Invoice#",
+        "description": "Description",
+        "sku": "SKU:",
+        "shippingAddress": "Shipping Address",
+        "billingAddress": "Billing Address",
+        "invoiceDate": "INVOICE DATE",
+        "item": "ITEM",
+        "qty": "QTY",
+        "unitPrice": "Unit Price",
+        "tax": "Tax",
+        "total": "Total",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "subtotalAfterDiscount": "Subtotal after discount",
+        "shipping": "Shipping",
+        "phone": "Phone",
+        "barcode": "BARCODE:",
+        "countryOfOrigin": "Country Of Origin:",
+        "hsCode": "HS Code:",
+        "weight": "Weight:",
+        "notes": "Notes:",
+        "paymentDetails": "Payment Details:",
+        "paymentGateway": "Gateway:",
+        "cardType": "Card:",
+        "cardNumber": "Card#:"
+    }
+}

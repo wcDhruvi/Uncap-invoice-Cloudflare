@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 import apiRoutes from './routes/api';
 import { handleWebhook } from './webhooks/shopify';
@@ -18,6 +19,15 @@ app.use('*', async (c, next) => {
   console.log(`[${c.req.method}] ${c.req.url}`);
   return await next();
 });
+
+// ── CORS MIDDLEWARE ─────────────────────────────────────
+app.use('/api/*', cors({
+  origin: (origin) => origin || '*',
+  allowHeaders: ['Content-Type', 'Authorization', 'x-shopify-shop-domain'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 600,
+}));
 
 // ── ROOT — Shopify entry route ─────────────────────────
 app.get('/', (c) => {

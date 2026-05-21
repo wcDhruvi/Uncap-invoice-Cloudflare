@@ -2,8 +2,8 @@ import { useContext, useState, useEffect } from "react"; // ← removed unused h
 import {
   Page, Text, BlockStack, Card, Button, InlineStack, Box,
   Spinner, Banner, Popover, ActionList, Badge,
-  IndexTable, Pagination
-} from "@shopify/polaris"; // ← removed useIndexResourceState
+  IndexTable
+} from "@shopify/polaris"; // ← removed useIndexResourceState and Pagination
 import { format } from "date-fns";
 import { ShopContext } from "../providers";
 import useApiService from "../utils/ApiService";
@@ -93,7 +93,7 @@ const Orders = () => {
       >
         <IndexTable.Cell>
           <Button variant="plain" onClick={() => window.open(orderUrl, '_blank')}>
-            <Text fontWeight="bold">{record.name}</Text>
+            <Text fontWeight="medium">{record.name}</Text>
           </Button>
         </IndexTable.Cell>
 
@@ -179,6 +179,9 @@ const Orders = () => {
           <BlockStack gap="400">
             <Box padding="400">
               <Text as="h2" variant="headingMd">Order List</Text>
+              <Text as="p" variant="bodyMd">
+                View all orders from your shop. Generate, view, or download invoices for each order.
+              </Text>
               {error && (
                 <Box paddingBlockStart="200">
                   <Banner tone="critical" onDismiss={() => setError(null)}>
@@ -202,21 +205,15 @@ const Orders = () => {
                 { title: 'Fulfillment' },
                 { title: 'Actions' },
               ]}
+              pagination={{
+                hasPrevious: page > 1,
+                onPrevious: handlePreviousPage,
+                hasNext: page * limit < totalCount,
+                onNext: handleNextPage,
+              }}
             >
               {rowMarkup}
             </IndexTable>
-
-            <Box padding="400">
-              <InlineStack align="center">
-                <Pagination
-                  hasPrevious={page > 1}
-                  onPrevious={handlePreviousPage}
-                  hasNext={page * limit < totalCount}
-                  onNext={handleNextPage}
-                  label={`${(page - 1) * limit + 1}–${Math.min(page * limit, totalCount)} of ${totalCount}`}
-                />
-              </InlineStack>
-            </Box>
           </BlockStack>
         </Card>
       </BlockStack>

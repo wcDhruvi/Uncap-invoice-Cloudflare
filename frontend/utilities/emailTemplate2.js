@@ -13,19 +13,25 @@ import { format } from 'date-fns';
           * @param {Object} settings - Invoice settings with styling preferences
           * @returns {string} - Complete HTML for the invoice
           */
-export const getTemplate = (templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {}) => {
-  const data = {
-    templateSettings,
-    order,
-    invoice,
-    settings,
-    language
-  };
-  // console.log('== templateSettings 1== ', templateSettings);
+export const getTemplate = (templateSettings, order, invoice, settings, language) => {
+  const normTemplateSettings = templateSettings || {};
+  const normOrder = order || {};
+  const normInvoice = invoice || {};
+  const normSettings = settings || {};
+  const normLanguage = language || {};
 
-  if (settings?.invoice_template === 'Design 3') {
+  const data = {
+    templateSettings: normTemplateSettings,
+    order: normOrder,
+    invoice: normInvoice,
+    settings: normSettings,
+    language: normLanguage
+  };
+  // console.log('== templateSettings 1== ', normTemplateSettings);
+
+  if (normSettings?.invoice_template === 'Design 3') {
     return generateInvoiceTemplate3(data);
-  } else if (settings?.invoice_template === 'Design 2') {
+  } else if (normSettings?.invoice_template === 'Design 2') {
     return generateInvoiceTemplate2(data);
   } else {
     return generateInvoiceHTML(data);
@@ -83,7 +89,12 @@ export const formatDate = (date, date_format) => {
  * @returns {string} - HTML string for the line items table rows
  */
 export const generateLineItemsHTML = (lineItems, templateSettings, settings, language) => {
-  if (!lineItems || lineItems.length === 0) {
+  lineItems = lineItems || [];
+  templateSettings = templateSettings || {};
+  settings = settings || {};
+  language = language || {};
+
+  if (lineItems.length === 0) {
     return '<tr><td colspan="6">No items</td></tr>';
   }
 
@@ -149,7 +160,12 @@ export const generateLineItemsHTML = (lineItems, templateSettings, settings, lan
  * @returns {string} - Complete HTML content for the email
  */
 export const generateInvoiceHTML = (data) => {
-  const { templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {} } = data;
+  const normData = data || {};
+  const templateSettings = normData.templateSettings || {};
+  const order = normData.order || {};
+  const invoice = normData.invoice || {};
+  const settings = normData.settings || {};
+  const language = normData.language || {};
 
   // Extract values with defaults
   const invoiceNumber = invoice?.invoiceNumber || '12345';
@@ -176,7 +192,7 @@ export const generateInvoiceHTML = (data) => {
   const secondaryColor = settings?.secondaryColor || '#f0ecf9';
 
   // Line items
-  const lineItems = order?.lineItems;
+  const lineItems = order?.lineItems || [];
 
   // Totals
   const subtotal = order?.subtotalPrice || '198.00';
@@ -197,7 +213,7 @@ export const generateInvoiceHTML = (data) => {
   const footerNote = settings?.footerNote || 'Thank you for your business!';
   const totalItems = lineItems?.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
-  const transaction = order.transactions[0] || []
+  const transaction = (order?.transactions && order.transactions[0]) || {}
 
   // Generate styles with dynamic colors
   const styles = `
@@ -560,7 +576,12 @@ export const generateInvoiceHTML = (data) => {
 };
 
 export const generateInvoiceTemplate2 = (data) => {
-  const { templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {} } = data;
+  const normData = data || {};
+  const templateSettings = normData.templateSettings || {};
+  const order = normData.order || {};
+  const invoice = normData.invoice || {};
+  const settings = normData.settings || {};
+  const language = normData.language || {};
   // console.log('settings', settings);
   // Extract values with defaults
   const invoiceNumber = invoice?.invoiceNumber || '12345';
@@ -587,7 +608,7 @@ export const generateInvoiceTemplate2 = (data) => {
   const secondaryColor = settings?.secondaryColor || '#f0ecf9';
 
   // Line items
-  const lineItems = order?.lineItems;
+  const lineItems = order?.lineItems || [];
   const totalItems = lineItems?.reduce((sum, item) => sum + (item.quantity || 0), 0);
   // Totals
   const subtotal = order?.subtotalPrice || '198.00';
@@ -595,7 +616,7 @@ export const generateInvoiceTemplate2 = (data) => {
   const totalShipping = order?.totalShipping || '50.00';
   const total = order?.totalPrice || '257.90';
   const currency = order?.currency || 'USD';
-  const transaction = order.transactions[0] || []
+  const transaction = (order?.transactions && order.transactions[0]) || {}
 
   const showCurrencyCode = settings?.showCurrencyCode || false
   // Header for client info
@@ -958,7 +979,12 @@ ${(settings?.showItemTotal ?? true) ? `<th class="heading_font" align="right" st
 };
 
 export const generateInvoiceTemplate3 = (data) => {
-  const { templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {} } = data;
+  const normData = data || {};
+  const templateSettings = normData.templateSettings || {};
+  const order = normData.order || {};
+  const invoice = normData.invoice || {};
+  const settings = normData.settings || {};
+  const language = normData.language || {};
   // Extract values with defaults
   const invoiceNumber = invoice?.invoiceNumber || '12345';
   const invoiceDate = formatDate(invoice?.createdAt || new Date(), settings?.date_format || 'MM/dd/yyyy');
@@ -988,7 +1014,7 @@ export const generateInvoiceTemplate3 = (data) => {
 
   const totalItems = lineItems?.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
-  const transaction = order.transactions[0] || []
+  const transaction = (order?.transactions && order.transactions[0]) || {}
 
   // Totals
   const showCurrencyCode = settings?.showCurrencyCode || false

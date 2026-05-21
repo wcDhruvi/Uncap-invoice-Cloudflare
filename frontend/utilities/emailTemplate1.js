@@ -52,7 +52,11 @@ export const formatDate = (date, date_format) => {
  * @returns {string} - HTML string for the line items table rows
  */
 export const generateLineItemsHTML = (lineItems, templateSettings, language) => {
-  if (!lineItems || lineItems.length === 0) {
+  lineItems = lineItems || [];
+  templateSettings = templateSettings || {};
+  language = language || {};
+
+  if (lineItems.length === 0) {
     return '<tr><td colspan="6">No items</td></tr>';
   }
   // console.log('lineItems', lineItems);
@@ -92,7 +96,12 @@ export const generateLineItemsHTML = (lineItems, templateSettings, language) => 
  * @returns {string} - Complete HTML content for the email
  */
 export const generateInvoiceHTML = (data) => {
-  const { templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {} } = data;
+  const normData = data || {};
+  const templateSettings = normData.templateSettings || {};
+  const order = normData.order || {};
+  const invoice = normData.invoice || {};
+  const settings = normData.settings || {};
+  const language = normData.language || {};
 
   // Extract values with defaults
   const invoiceNumber = invoice?.invoiceNumber || '12345';
@@ -119,7 +128,7 @@ export const generateInvoiceHTML = (data) => {
   const secondaryColor = settings?.secondaryColor || '#f0ecf9';
 
   // Line items
-  const lineItems = order?.lineItems;
+  const lineItems = order?.lineItems || [];
 
   // Totals
   const subtotal = order?.subtotalPrice || '198.00';
@@ -433,15 +442,21 @@ export const generateInvoiceHTML = (data) => {
           * @param {Object} settings - Invoice settings with styling preferences
           * @returns {string} - Complete HTML for the invoice
           */
-export const getTemplate = (templateSettings = {}, order = {}, invoice = {}, settings = {}, language = {}) => {
+export const getTemplate = (templateSettings, order, invoice, settings, language) => {
+  const normTemplateSettings = templateSettings || {};
+  const normOrder = order || {};
+  const normInvoice = invoice || {};
+  const normSettings = settings || {};
+  const normLanguage = language || {};
+
   const data = {
-    templateSettings,
-    order,
-    invoice,
-    settings,
-    language
+    templateSettings: normTemplateSettings,
+    order: normOrder,
+    invoice: normInvoice,
+    settings: normSettings,
+    language: normLanguage
   };
-  // console.log('== templateSettings 1== ', templateSettings);
+  // console.log('== templateSettings 1== ', normTemplateSettings);
   // console.log('== data 1== ', data);
   return generateInvoiceHTML(data);
 };

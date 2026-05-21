@@ -106,7 +106,40 @@ export const getShopDetails = async (c) => {
 
       try {
         console.log(`Setting default invoice language for shop ${id}`);
-        await upsertInvoiceLanguage(db, id, {});
+        await upsertInvoiceLanguage(db, id, {
+          invoice: 'Invoice',
+          invoice_number: 'Invoice#',
+          invoice_date: 'INVOICE DATE',
+          bill_to: 'Bill To',
+          ship_to: 'Ship To',
+          shipping_address: 'Shipping Address',
+          billing_address: 'Billing Address',
+          phone: 'Phone:',
+          payment_info: 'Make all Checks payable to',
+          item: 'ITEM',
+          description: 'Description',
+          qty: 'QTY',
+          unit_price: 'Unit Price',
+          total: 'Total',
+          subtotal: 'Subtotal',
+          discount: 'Discount',
+          tax: 'Tax',
+          shipping: 'Shipping',
+          subtotal_after_discount: 'Subtotal after discount',
+          thank_you_note: 'Thank you for your purchase.',
+          notes: 'Notes:',
+          term_condition_title: 'Terms & conditions',
+          term_condition_content: '<p><strong>Terms:</strong></p><ul><li>This is a computer generated invoice and does not require signature.</li><li>For warranty and returns related information, please contact our customer support.</li></ul>',
+          sku: 'SKU:',
+          barcode: 'BARCODE:',
+          weight: 'Weight:',
+          hs_code: 'HS Code:',
+          country_of_origin: 'Country Of Origin:',
+          payment_details: 'Payment Details:',
+          payment_gateway: 'Gateway:',
+          card_type: 'Card:',
+          card_number: 'Card#:'
+        });
   
         console.log(`Setting default invoice settings for shop ${id}`);
         const templateSettings = {
@@ -128,13 +161,59 @@ export const getShopDetails = async (c) => {
           }
         };
   
+        const addressStr = [shopInfo.billingAddress?.address1, shopInfo.billingAddress?.address2].filter(Boolean).join(', ') || '';
+
         await upsertInvoiceSettings(db, id, {
-          business_name: shopInfo.name,
           brand_name: shopInfo.name,
-          sender_address: shopInfo.email,
-          support_email: shopInfo.email,
+          business_name: shopInfo.name,
+          business_address: addressStr || null,
+          street: shopInfo.billingAddress?.address1 || '',
+          apartment: shopInfo.billingAddress?.address2 || '',
+          state: shopInfo.billingAddress?.province || '',
+          additional_info: '',
           city: shopInfo.billingAddress?.city || '',
           country: shopInfo.billingAddress?.country || '',
+          zip_code: shopInfo.billingAddress?.zip || '',
+          phone: shopInfo.billingAddress?.phone || '',
+          company_website: shopInfo.primaryDomain?.url || shopInfo.primaryDomain?.host || '',
+          support_email: shopInfo.email,
+          sender_name: shopInfo.name || 'Uncap',
+          sender_address: shopInfo.email || 'support@uncap.com',
+          invoice_template: 'Design 1',
+          primary_color: '#8257d0',
+          secondary_color: '#f0ecf9',
+          primary_text_color: '#ffffff',
+          invoice_text_color: '#000000',
+          heading_font: 'Roboto',
+          body_font: 'Open Sans',
+          paper_size: 'A4',
+          date_format: 'MM/dd/yyyy',
+          default_due_date: 0,
+          send_invoice: 'manuall',
+          auto_invoice_send_condition: 'created',
+          new_order_email_title: `Invoice {{ number }} from ${shopInfo.name || 'Uncap'}`,
+          new_order_email_content: ` <p>Dear {{ client.first_name }},</p><p>Please find the attached invoice for your order {{ number }}.</p><p>Please contact us for further support.</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>${shopInfo.name || 'Uncap'}</p>`,
+          edited_order_email_title: `Updated invoice {{ number }} from ${shopInfo.name || 'Uncap'}`,
+          edited_order_email_content: `<p>Dear {{ client.first_name }},</p><p>Please find the updated invoice for your order {{ number }}.</p><p>Please contact us for further support.</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>${shopInfo.name || 'Uncap'}</p>`,
+          cancelled_order_email_title: `Updated invoice {{ number }} from ${shopInfo.name || 'Uncap'}`,
+          cancelled_order_email_content: `<p>Dear {{ client.first_name }},</p><p>Please find the updated invoice for your order {{ number }}.</p><p>Please contact us for further support.122</p><p>Thank you again for your order.</p><p>We hope you enjoyed shopping with us.</p><p><br></p><p>Best regards,</p><p>${shopInfo.name || 'Uncap'}</p>`,
+          footer_note: '',
+          show_image: false,
+          show_sku: false,
+          show_barcode: false,
+          show_weight: false,
+          show_hs_code: false,
+          show_country: false,
+          show_payment_gateway: false,
+          show_card_type: false,
+          show_card_last_digit: false,
+          show_currency_code: false,
+          show_item_total: false,
+          show_total_quantity: false,
+          show_payment_details: false,
+          show_payment_link: false,
+          show_order_note: false,
+          not_show_zero_outstanding: true,
           template_settings: JSON.stringify(templateSettings)
         });
       } catch (err) {

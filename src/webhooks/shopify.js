@@ -56,7 +56,6 @@ export const handleWebhook = async (c) => {
             confirmed: !!payload.confirmed,
             total_discounts: parseFloat(payload.total_discounts || '0'),
             total_line_items_price: parseFloat(payload.total_line_items_price || '0'),
-            cart_token: payload.cart_token,
             name: payload.name,
             cancelled_at: payload.cancelled_at,
             cancel_reason: payload.cancel_reason,

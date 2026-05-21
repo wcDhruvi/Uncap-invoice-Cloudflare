@@ -1,5 +1,20 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, getTableColumns } from 'drizzle-orm';
 import { shops, orders, customers, syncs, invoices, products, productVariants, orderLineItems, fulfillments, invoiceSettings, invoiceLanguages } from './schema';
+
+/**
+ * Filters input data to only include keys that match columns defined in the Drizzle table schema.
+ */
+function filterTableFields(table, data) {
+  if (!data) return {};
+  const columns = getTableColumns(table);
+  const filtered = {};
+  for (const key of Object.keys(data)) {
+    if (key in columns) {
+      filtered[key] = data[key];
+    }
+  }
+  return filtered;
+}
 
 /**
  * Retrieves a shop record by its Shopify domain.
@@ -97,7 +112,6 @@ export async function upsertOrder(db, orderData) {
         confirmed: orderData.confirmed,
         total_discounts: orderData.total_discounts,
         total_line_items_price: orderData.total_line_items_price,
-        cart_token: orderData.cart_token,
         name: orderData.name,
         cancelled_at: orderData.cancelled_at,
         cancel_reason: orderData.cancel_reason,
@@ -349,6 +363,7 @@ export async function getInvoiceLanguageByShop(db, shopId) {
  * Upserts default invoice settings for a shop
  */
 export async function upsertInvoiceSettings(db, shopId, data) {
+  const filteredData = filterTableFields(invoiceSettings, data);
   const existing = await db
     .select()
     .from(invoiceSettings)
@@ -358,12 +373,12 @@ export async function upsertInvoiceSettings(db, shopId, data) {
   if (existing.length > 0) {
     return await db
       .update(invoiceSettings)
-      .set({ ...data, updated_at: new Date().toISOString() })
+      .set({ ...filteredData, updated_at: new Date().toISOString() })
       .where(eq(invoiceSettings.shop_id, shopId));
   } else {
     return await db
       .insert(invoiceSettings)
-      .values({ shop_id: shopId, ...data });
+      .values({ shop_id: shopId, ...filteredData });
   }
 }
 
@@ -371,6 +386,7 @@ export async function upsertInvoiceSettings(db, shopId, data) {
  * Upserts default invoice language for a shop
  */
 export async function upsertInvoiceLanguage(db, shopId, data) {
+  const filteredData = filterTableFields(invoiceLanguages, data);
   const existing = await db
     .select()
     .from(invoiceLanguages)
@@ -380,11 +396,11 @@ export async function upsertInvoiceLanguage(db, shopId, data) {
   if (existing.length > 0) {
     return await db
       .update(invoiceLanguages)
-      .set({ ...data, updated_at: new Date().toISOString() })
+      .set({ ...filteredData, updated_at: new Date().toISOString() })
       .where(eq(invoiceLanguages.shop_id, shopId));
   } else {
     return await db
       .insert(invoiceLanguages)
-      .values({ shop_id: shopId, ...data });
+      .values({ shop_id: shopId, ...filteredData });
   }
 }

@@ -35,7 +35,6 @@ ALTER TABLE `shopify_orders` ADD `taxes_included` integer;--> statement-breakpoi
 ALTER TABLE `shopify_orders` ADD `confirmed` integer;--> statement-breakpoint
 ALTER TABLE `shopify_orders` ADD `total_discounts` real;--> statement-breakpoint
 ALTER TABLE `shopify_orders` ADD `total_line_items_price` real;--> statement-breakpoint
-ALTER TABLE `shopify_orders` ADD `cart_token` text;--> statement-breakpoint
 ALTER TABLE `shopify_orders` ADD `name` text;--> statement-breakpoint
 ALTER TABLE `shopify_orders` ADD `cancelled_at` text;--> statement-breakpoint
 ALTER TABLE `shopify_orders` ADD `cancel_reason` text;--> statement-breakpoint
